@@ -7,26 +7,30 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type Number interface {
+	int | int8 | int16 | int32 | int64
+}
+
 // go test -v homework_test.go
-type CircularQueue struct {
-	values   []int
+type CircularQueue[T Number] struct {
+	values   []T
 	head     int
 	tail     int
 	size     int
 	capacity int
 }
 
-func NewCircularQueue(size int) *CircularQueue {
+func NewCircularQueue[T Number](size int) *CircularQueue[T] {
 	if size <= 0 {
 		panic("size must be gt 0")
 	}
-	return &CircularQueue{
-		values:   make([]int, size),
+	return &CircularQueue[T]{
+		values:   make([]T, size),
 		capacity: size,
 	}
 }
 
-func (q *CircularQueue) Push(value int) bool {
+func (q *CircularQueue[T]) Push(value T) bool {
 	if q.Full() {
 		return false
 	}
@@ -37,7 +41,7 @@ func (q *CircularQueue) Push(value int) bool {
 	return true
 }
 
-func (q *CircularQueue) Pop() bool {
+func (q *CircularQueue[T]) Pop() bool {
 	if q.Empty() {
 		return false
 	}
@@ -47,7 +51,7 @@ func (q *CircularQueue) Pop() bool {
 	return true
 }
 
-func (q *CircularQueue) Front() int {
+func (q *CircularQueue[T]) Front() T {
 	if q.Empty() {
 		return -1
 	}
@@ -55,7 +59,7 @@ func (q *CircularQueue) Front() int {
 	return q.values[q.head]
 }
 
-func (q *CircularQueue) Back() int {
+func (q *CircularQueue[T]) Back() T {
 	if q.Empty() {
 		return -1
 	}
@@ -64,18 +68,18 @@ func (q *CircularQueue) Back() int {
 }
 
 // Проверка на пустоту
-func (q *CircularQueue) Empty() bool {
+func (q *CircularQueue[T]) Empty() bool {
 	return q.size == 0
 }
 
 // Проверка на заполненность
-func (q *CircularQueue) Full() bool {
+func (q *CircularQueue[T]) Full() bool {
 	return q.size == q.capacity
 }
 
 func TestCircularQueue(t *testing.T) {
 	const queueSize = 3
-	queue := NewCircularQueue(queueSize)
+	queue := NewCircularQueue[int](queueSize)
 
 	assert.True(t, queue.Empty())
 	assert.False(t, queue.Full())
